@@ -88,9 +88,9 @@ with tab1:
         balance = total_income - total_spend
         
         col1, col2, col3 = st.columns(3)
-        col1.metric("💸 Total Expense", f"${total_spend:,.2f}")
-        col2.metric("💰 Total Income", f"${total_income:,.2f}")
-        col3.metric("🏦 Balance", f"${balance:,.2f}", delta_color="normal")
+        col1.metric("💸 Total Expense", f"₹{total_spend:,.2f}")
+        col2.metric("💰 Total Income", f"₹{total_income:,.2f}")
+        col3.metric("🏦 Balance", f"₹{balance:,.2f}", delta_color="normal")
         
         st.divider()
         
@@ -157,4 +157,5 @@ with tab3:
                 # Rerun to update dashboard immediately
                 st.rerun() 
             except Exception as e:
+
                 st.error(f"Error saving to Google Sheet: {e}")

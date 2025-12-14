@@ -73,7 +73,7 @@ def load_data():
 df = load_data()
 
 # --- APP TABS ---
-tab1, tab2, tab3 = st.tabs(["📊 Dashboard", "📈 Analysis", "➕ Add Expense"])
+tab1, tab2, tab3, tab4 = st.tabs(["📊 Dashboard", "📈 Analysis", "➕ Add Expense", "🗑️ Manage"])
 
 # --- TAB 1: DASHBOARD ---
 with tab1:
@@ -159,3 +159,37 @@ with tab3:
             except Exception as e:
 
                 st.error(f"Error saving to Google Sheet: {e}")
+    # --- TAB 4: MANAGE DATA ---
+with tab4:
+    st.header("Manage Transactions")
+    
+    # Show all data with row numbers (Index)
+    # We reset index to start at 1 to match human counting, but remember Sheet has headers!
+    st.write("Select a transaction ID to delete permanently.")
+    
+    if df.empty:
+        st.info("No data to delete.")
+    else:
+        # Create a display dataframe with a clear ID
+        display_df = df.copy()
+        display_df.index = display_df.index + 2 # Align with Google Sheet Row numbers (Row 1 is header)
+        display_df.index.name = "Sheet_Row_ID"
+        
+        st.dataframe(display_df.sort_index(ascending=False), use_container_width=True)
+        
+        # Delete Interface
+        row_to_delete = st.number_input("Enter Sheet_Row_ID to delete:", 
+                                        min_value=2, 
+                                        max_value=len(df)+1, 
+                                        step=1,
+                                        value=len(df)+1)
+        
+        if st.button("❌ Delete Selected Row"):
+            try:
+                # Delete the row from Google Sheets
+                sheet.delete_rows(int(row_to_delete))
+                st.success(f"Row {row_to_delete} deleted successfully!")
+                st.rerun()
+            except Exception as e:
+                st.error(f"Error deleting row: {e}")
+
